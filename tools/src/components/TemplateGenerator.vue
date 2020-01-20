@@ -28,7 +28,8 @@
           <!--  <Input  ref="code" v-model="template" type="textarea" :autosize="{minRows: 40, maxRows: 40}" placeholder="请输入模板"></Input> -->
         </Col>
         <Col span="10">
-            <Input v-model="message" class="message-input" disabled type="textarea" :autosize="{minRows: 44, maxRows: 44}" placeholder=""></Input>
+          <!-- <Input v-model="message" class="message-input" disabled type="textarea" :autosize="{minRows: 44, maxRows: 44}" placeholder=""></Input> -->
+          <codemirror :value="message" class="code-mirror" :options="Object.assign({}, cmOptions, codeOptions)" ></codemirror>
         </Col>
     </Row>
   </div>
@@ -190,10 +191,10 @@ export default {
           matchBrackets: true
         },
         paramOptions: {
-          mode: {name: 'javascript'}   //定义mode 
+          mode: {name: 'javascript'}   
         },
         codeOptions: {
-          mode: {name: 'text/x-mariadb'},   //定义mode 
+          mode: {name: 'text/x-mariadb'},   
           hintOptions: {
             // 自定义提示选项
             tables: {
@@ -313,7 +314,7 @@ a {
     font-family:"微软雅黑"
 }
 
-.param-mirror {
+.param-mirror, .code-mirror {
   border-right: 1px solid #fff;
 }
 </style>
