@@ -107,6 +107,7 @@ export default {
       return {
         param: '',
         paramType: 'auto_split_by_comma',
+        autoFill: false,
         paramTypes: [
             {
                 value: 'auto_split_by_comma',
@@ -233,6 +234,7 @@ export default {
           this.message = outputs.join("\n")
       },
       changeHandle: function(){
+          this.autoFill = true
           let template = this.getSelectedParamType(this.paramType).template.trim()
           if(template != ''){
               this.param = template
@@ -255,7 +257,13 @@ export default {
           this.$Message.success('复制成功')
       },
       onCursorActivity: function(codemirror){
-        codemirror.showHint({completeSingle: false})
+        //console.info(codemirror.getValue())
+        if(this.autoFill == false && codemirror.getValue() != ''){
+          codemirror.showHint({completeSingle: false})
+        }
+        if(this.autoFill == true){
+          this.autoFill = false;
+        }
       },
       build: function (template) {
           return new Function("index", "...__param__", `
@@ -301,7 +309,7 @@ a {
  /* Set height, width, borders, and global font properties here */
     font-family: monospace;
     height: 933px;
-    font-size: 15px;
+    font-size: 14px;
     font-family:"微软雅黑"
 }
 
