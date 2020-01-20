@@ -236,10 +236,7 @@ export default {
       },
       changeHandle: function(){
           this.autoFill = true
-          let template = this.getSelectedParamType(this.paramType).template.trim()
-          if(template != ''){
-              this.param = template
-          }
+          this.param = this.getSelectedParamType(this.paramType).template.trim()
       },
       clearHandle: function(){
         this.param = ''
