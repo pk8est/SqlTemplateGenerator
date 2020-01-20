@@ -3,7 +3,7 @@
       <Row>
         <Col span="4">
             <Row>
-                <Col span="8"><Button v-on:click="clearHandle" long>清空内容</Button></Col>
+                <Col span="8"><!-- <Button v-on:click="clearHandle" long>清空内容</Button> --></Col>
                 <Col span="16">
                   <Select v-model="paramType" @on-change="changeHandle">
                       <Option v-for="item in paramTypes" :value="item.value" :key="item.value">{{ item.label }}</Option>
@@ -20,15 +20,15 @@
     </Row>
     <Row>
         <Col span="4">
-            <Input v-model="param" type="textarea" :autosize="{minRows: 40, maxRows: 40}" placeholder="请输入数组,换行或者逗号分隔"></Input>
-            <!-- <codemirror v-model="param" :options="cmOptions" @cursorActivity="onCursorActivity"></codemirror> -->
+            <!-- <Input v-model="param" type="textarea" :autosize="{minRows: 40, maxRows: 40}" placeholder="请输入数组,换行或者逗号分隔"></Input> -->
+            <codemirror v-model="param" class="param-mirror" :options="Object.assign({}, cmOptions, paramOptions)" @cursorActivity="onCursorActivity"></codemirror>
         </Col>
         <Col span="10">
-          <codemirror v-model="template" class="code-mirror" disabled :options="cmOptions" @cursorActivity="onCursorActivity"></codemirror>
+          <codemirror v-model="template" class="code-mirror" :options="Object.assign({}, cmOptions, codeOptions)" @cursorActivity="onCursorActivity"></codemirror>
           <!--  <Input  ref="code" v-model="template" type="textarea" :autosize="{minRows: 40, maxRows: 40}" placeholder="请输入模板"></Input> -->
         </Col>
         <Col span="10">
-            <Input v-model="message" class="message-input" disabled type="textarea" :autosize="{minRows: 40, maxRows: 40}" placeholder=""></Input>
+            <Input v-model="message" class="message-input" disabled type="textarea" :autosize="{minRows: 44, maxRows: 44}" placeholder=""></Input>
         </Col>
     </Row>
   </div>
@@ -43,13 +43,19 @@ import 'codemirror/addon/edit/matchbrackets'
 import 'codemirror/theme/blackboard.css';
 import 'codemirror/addon/hint/show-hint.css';
 import 'codemirror/lib/codemirror';
-import 'codemirror/mode/sql/sql';
 import 'codemirror/addon/hint/show-hint';
 import 'codemirror/addon/search/searchcursor';
 import 'codemirror/addon/search/search';
 import 'codemirror/addon/display/placeholder';
-import 'codemirror/addon/hint/sql-hint';
 import 'codemirror/addon/hint/anyword-hint';
+
+import 'codemirror/mode/sql/sql';
+import 'codemirror/addon/hint/sql-hint';
+
+import 'codemirror/addon/hint/javascript-hint';
+import 'codemirror/mode/javascript/javascript';
+
+
 
 const spliter = (content, lineSeparator = '', rowSeparator = '')  => content.split(lineSeparator).map(item => item.split(rowSeparator))
 
@@ -176,12 +182,17 @@ export default {
           mode: 'htmlmixed',     // HMTL混合模式
           lineWrapping: true,    // 自动换行
           theme: 'blackboard',      // 编辑器主题
-          mode: {name: 'text/x-mariadb'},          //定义mode
           extraKeys: {'Ctrl': 'autocomplete'},   //自动提示配置
           indentWithTabs: true,
           smartIndent: true,
           lineNumbers: true,
-          matchBrackets: true,
+          matchBrackets: true
+        },
+        paramOptions: {
+          mode: {name: 'javascript'}   //定义mode 
+        },
+        codeOptions: {
+          mode: {name: 'text/x-mariadb'},   //定义mode 
           hintOptions: {
             // 自定义提示选项
             tables: {
@@ -223,7 +234,7 @@ export default {
       },
       changeHandle: function(){
           let template = this.getSelectedParamType(this.paramType).template.trim()
-          if(template != '' && this.param == ''){
+          if(template != ''){
               this.param = template
           }
       },
@@ -244,7 +255,7 @@ export default {
           this.$Message.success('复制成功')
       },
       onCursorActivity: function(codemirror){
-        codemirror.showHint({completeSingle:false})
+        codemirror.showHint({completeSingle: false})
       },
       build: function (template) {
           return new Function("index", "...__param__", `
@@ -289,7 +300,12 @@ a {
 .CodeMirror {
  /* Set height, width, borders, and global font properties here */
     font-family: monospace;
-    height: 850px;
+    height: 933px;
+    font-size: 15px;
+    font-family:"微软雅黑"
 }
 
+.param-mirror {
+  border-right: 1px solid #fff;
+}
 </style>
