@@ -24,7 +24,7 @@
             <codemirror v-model="code" class="code-mirror" :options="Object.assign({}, cmOptions, codeOptions)" @cursorActivity="onCursorActivity" @beforeChange="onBeforeChange"></codemirror>
         </Col>
         <Col span="10">
-          <codemirror v-model="template" class="code-mirror" :options="Object.assign({}, cmOptions, codeOptions)" @cursorActivity="onCursorActivity($event)" @beforeChange="onBeforeChange"></codemirror>
+          <codemirror v-model="template" class="code-mirror" :options="Object.assign({}, cmOptions, templateOptions)" @cursorActivity="onCursorActivity($event)" @beforeChange="onBeforeChange"></codemirror>
           <!--  <Input  ref="code" v-model="template" type="textarea" :autosize="{minRows: 40, maxRows: 40}" placeholder="请输入模板"></Input> -->
         </Col>
         <Col span="10">
@@ -142,30 +142,24 @@ export default {
   data () {
       return {
         code: '',
-        codeType: 'auto_split_by_comma',
+        codeType: 'time_interval',
         changedEvent: null,
         codeTypes: [
             {
                 value: 'auto_split_by_comma',
                 label: '自动分隔行列(","号分隔)',
-                line_separator: "\n",
-                row_separator: ",",
                 template: "",
-                handle: spliter
+                handle: content => spliter(content, "\n", ',')
             },
             {
                 value: 'auto_split_by_tick',
                 label: '自动分隔行列("|"号分隔)',
-                line_separator: "\n",
-                row_separator: "|",
                 template: "",
-                handle: spliter
+                handle: content => spliter(content, "\n", '|')
             },
             {
                 value: 'range',
                 label: 'for循环',
-                line_separator: "",
-                row_separator: "",
                 template: "let start = 0\nlet end = 10\nlet step = 1",
                 handle: function(content) {
                     let data = new Function(content + "; return [start,end,step]")()
@@ -175,8 +169,6 @@ export default {
             {
                 value: 'number_interval',
                 label: '自动生成数字区间',
-                line_separator: "",
-                row_separator: "",
                 template: `let start = 0\nlet end = 100\nlet step = 20\nlet contain = false`,
                 handle: function(content) {
                     let data = new Function(content + "; return [start,end,step]")()
@@ -186,8 +178,6 @@ export default {
             {
                 value: 'time_interval',
                 label: '自动生成时间区间',
-                line_separator: "",
-                row_separator: ",",
                 template: "let start = '2020-01-01 00:00:00'\nlet end = '2020-01-02 00:00:00'\nlet step = 12\nlet util = 'hours'\nlet format='YYYY-MM-DD HH:mm:ss'\nlet contain = true",
                 handle: function(content) {
                     let data = new Function(content + "; return [start,end,step,util,format,contain]")()
@@ -197,8 +187,6 @@ export default {
             {
                 value: 'custom',
                 label: '自定义',
-                line_separator: "",
-                row_separator: "",
                 template: "let data=[{\n\tid: 1, \n\tname: '小明'\n}]\n\nreturn data",
                 handle: function(content){
                     let data = new Function(content)()
@@ -242,7 +230,7 @@ export default {
         codeOptions: {
           mode: {name: 'javascript'}   
         },
-        codeOptions: {
+        templateOptions: {
           mode: {name: 'text/x-mariadb'},   
           hintOptions: {
             // 自定义提示选项
@@ -261,7 +249,10 @@ export default {
       }
   },
   mounted () {
-   
+    let codeType = this.getSelectedCodeType(this.codeType)
+    if(codeType != undefined && codeType.template != ''){
+      this.code = codeType.template
+    }
   },
   methods: {
       clickHandle: function(){
@@ -278,10 +269,10 @@ export default {
               console.debug("[TEMPLATE]")
               console.debug(this.template)
               let codeType = this.getSelectedCodeType(this.codeType)
-              let list = codeType.handle.call(codeType, this.code, codeType.line_separator, codeType.row_separator)
+              let list = codeType.handle.call(codeType, this.code)
               console.table(list)
-              for(let code of list){
-                  outputs.push(fn(counter++, code))
+              for(let param of list){
+                  outputs.push(fn(counter++, param))
               }
               this.message = outputs.join("\n")
               this.$Message.success('生成成功')
@@ -392,7 +383,7 @@ a {
   background-color: #0C1021;
 }
 
-.CodeMirror {
+.template-generator .CodeMirror {
  /* Set height, width, borders, and global font properties here */
     font-family: monospace;
     height: 933px;
@@ -400,7 +391,7 @@ a {
     font-family:"微软雅黑"
 }
 
-.code-mirror, .code-mirror {
+.template-generator .code-mirror, .code-mirror {
   border-right: 1px solid #fff;
 }
 </style>
