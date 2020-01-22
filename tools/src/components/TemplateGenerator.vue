@@ -2,14 +2,17 @@
   <div class="template-generator">
       <Row>
         <Col span="4">
-            <Row>
-                <Col span="8"><!-- <Button v-on:click="clearHandle" long>清空内容</Button> --></Col>
+            <!-- <Row>
+                <Col span="8"><Button v-on:click="clearHandle" long>清空内容</Button></Col>
                 <Col span="16">
                   <Select v-model="codeType" @on-change="changeHandle">
                       <Option v-for="item in codeTypes" :value="item.value" :key="item.value">{{ item.label }}</Option>
                   </Select>
                 </Col>
-            </Row>
+            </Row> -->
+            <Select v-model="codeType" @on-change="changeHandle">
+              <Option v-for="item in codeTypes" :value="item.value" :key="item.value">{{ item.label }}</Option>
+            </Select>
         </Col>
         <Col span="10">
             <Button type="success" v-on:click="clickHandle" long>生成</Button>
@@ -360,20 +363,6 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h1, h2 {
-  font-weight: normal;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
 
 </style>
 

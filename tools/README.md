@@ -1,8 +1,8 @@
-# tools
+# TemplateGenerator
 
-> A Vue.js project
+> 一个快速生成模板的工具
 
-## Build Setup
+## Dev Setup
 
 ``` bash
 # install dependencies
@@ -10,21 +10,29 @@ npm install
 
 # serve with hot reload at localhost:8080
 npm run dev
+```
 
+## Run Build
+``` bash
 # build for production with minification
 npm run build
 
 # build for production and view the bundle analyzer report
 npm run build --report
 
-# run unit tests
-npm run unit
+# 
+npm install -g serve
 
-# run e2e tests
-npm run e2e
-
-# run all tests
-npm test
+# local run server
+serve -s dist
 ```
 
-For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+
+## Deploy Build
+``` bash
+docker build . -t template-generator
+
+docker run -d --restart=always -p 8080:80 template-generator
+
+curl localhost:8080
+```
